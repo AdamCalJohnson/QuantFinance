@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DataFrame Display</title>
+    <style>
+        table.data {
+            border-collapse: collapse;
+            width: 50%;
+        }
+
+        table.data, th.data, td.data {
+            border: 1px solid black;
+        }
+
+        th.data, td.data {
+            padding: 10px;
+            text-align: left;
+            cursor: pointer; /* Add cursor style for clickable headers */
+        }
+    </style>
+</head>
+<body>
+    <h1>DataFrame Display</h1>
+    <table>
+        <thead>
+            <tr>
+                {% for col in titles %}
+                    <th class="clickable-header" data-col="{{ col }}">{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="{{ titles|length }}">
+                    {{ tables[0] | safe }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+<!-- Add this script tag to your HTML template -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let clickableHeaders = document.querySelectorAll('.clickable-header');
+        
+        clickableHeaders.forEach(header => {
+            header.addEventListener('click', function () {
+                let colName = header.getAttribute('data-col');
+                // Send the clicked column name to the server
+                fetch('/get_cvar_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `col=${colName}`,
+                }).then(response => {
+                    if (response.ok) {
+                        // You can handle the response if needed
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
